@@ -5,6 +5,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -24,20 +25,36 @@ public class Order {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "gift_certificate_id", nullable = false)
-    private GiftCertificate giftCertificate;
+    @ManyToMany(
+            cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.LAZY)
+    @JoinTable(name = "orders_gift_certificates",
+            joinColumns = @JoinColumn(name = "order_id"),
+            inverseJoinColumns = @JoinColumn(name = "gift_certificate_id"))
+    private Set<GiftCertificate> giftCertificates;
 
     public Order() {
     }
 
-    public Order(long id, BigDecimal price, LocalDateTime createDate, User user, GiftCertificate giftCertificate) {
+    public Order(User user, Set<GiftCertificate> giftCertificates) {
+        this.user = user;
+        this.giftCertificates = giftCertificates;
+    }
+
+    public Order(BigDecimal price, User user, Set<GiftCertificate> giftCertificates) {
+        this.price = price;
+        this.user = user;
+        this.giftCertificates = giftCertificates;
+    }
+
+    public Order(long id, BigDecimal price, LocalDateTime createDate,
+                 User user, Set<GiftCertificate> giftCertificates) {
         this.id = id;
         this.price = price;
         this.createDate = createDate;
         this.user = user;
-        this.giftCertificate = giftCertificate;
+        this.giftCertificates = giftCertificates;
     }
+
 
     @PrePersist
     public void onPrePersist() {
@@ -76,12 +93,12 @@ public class Order {
         this.user = user;
     }
 
-    public GiftCertificate getGiftCertificate() {
-        return giftCertificate;
+    public Set<GiftCertificate> getGiftCertificates() {
+        return giftCertificates;
     }
 
-    public void setGiftCertificate(GiftCertificate giftCertificate) {
-        this.giftCertificate = giftCertificate;
+    public void setGiftCertificates(Set<GiftCertificate> giftCertificates) {
+        this.giftCertificates = giftCertificates;
     }
 
     @Override
@@ -91,7 +108,7 @@ public class Order {
                 ", price=" + price +
                 ", createDate=" + createDate +
                 ", user=" + user +
-                ", giftCertificate=" + giftCertificate +
+                ", giftCertificates=" + giftCertificates +
                 '}';
     }
 }

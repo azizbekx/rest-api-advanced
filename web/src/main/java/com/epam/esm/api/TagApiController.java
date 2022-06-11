@@ -33,6 +33,7 @@ public class TagApiController {
     /**
      * Method for getting all object from db
      *
+     * @param entityPage - EntityPage is collection of page parameters in object
      * @return List<TagDto> entity is found entities in db
      */
     @GetMapping
@@ -57,7 +58,6 @@ public class TagApiController {
 
     /**
      * Method for getting object with id from db
-     *
      * @param id it is id of object which is getting
      * @return TagDto entity is found
      */
@@ -68,9 +68,17 @@ public class TagApiController {
         return tagDto;
     }
 
-    @GetMapping("/filter")
+    /**
+     * Mathod for filtering object with parameters
+     *
+     * @param tag_name tag_name is name of Tag
+     * @return TagDto entity is found
+     */
+    @GetMapping("/search")
     public TagDto getByName(@RequestParam(value = "tag_name") String tag_name) {
-        return tagService.getByName(tag_name);
+        TagDto tagDto = tagService.getByName(tag_name);
+        hateoasAdder.addFullLinks(tagDto);
+        return tagDto;
     }
 
     /**
@@ -82,7 +90,9 @@ public class TagApiController {
     @PostMapping("/insert")
     @ResponseStatus(HttpStatus.CREATED)
     public TagDto insert(@RequestBody TagDto tagDto) {
-        return tagService.insert(tagDto);
+        TagDto savedTag = tagService.insert(tagDto);
+        hateoasAdder.addFullLinks(savedTag);
+        return savedTag;
     }
 
     /**
@@ -94,9 +104,15 @@ public class TagApiController {
     @DeleteMapping("/delete/{id}")
     public SuccessResponse deleteById(@PathVariable long id) {
         boolean success = tagService.deleteById(id);
-        return new SuccessResponse(success, "Object was successfully updated (id = " + id + " )");
+        return new SuccessResponse(success, "Object was successfully deleted (id = " + id + " )");
     }
 
+    /**
+     * Method for getting top used tag of user with the highest cost of orders
+     *
+     * @param userId UserId is id of user
+     * @return TagDto is found in db
+     */
     @GetMapping("/top/{userId}")
     public TagDto getTopTagOfUserWithHighestCostOrder(@PathVariable long userId) {
         TagDto tagDto = tagService.getTopUsedOfUser(userId);

@@ -1,8 +1,8 @@
 package com.epam.esm.repository.impl;
 
 import com.epam.esm.entity.User;
-import com.epam.esm.repository.PaginationDao;
 import com.epam.esm.repository.UserDao;
+import com.epam.esm.repository.pagination.PaginationDao;
 import org.hibernate.cfg.NotYetImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

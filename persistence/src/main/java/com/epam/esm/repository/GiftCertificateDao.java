@@ -11,7 +11,9 @@ import java.util.Optional;
 public interface GiftCertificateDao extends BasicDao<GiftCertificate> {
     GiftCertificate update(GiftCertificate giftCertificate);
 
-    boolean deleteRemovedGiftCertificate(long id);
+    boolean deleteFromTag(long id);
+
+    boolean deleteFromOrder(long id);
 
     Optional<GiftCertificate> getByName(String name);
 

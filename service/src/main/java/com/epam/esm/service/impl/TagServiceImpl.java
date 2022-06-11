@@ -26,8 +26,8 @@ public class TagServiceImpl implements TagService {
     public PaginationResult<TagDto> getAll(EntityPage entityPage) {
 
         PaginationResult<Tag> tagList = tagDao.list(entityPage);
-        if (tagList.getRecords().isEmpty()) {
-            throw new ResourceNotFoundException();
+        if (entityPage.getPage() == 1 && tagList.getRecords().isEmpty()) {
+            throw new ResourceNotFoundException("Resource not found");
         }
         //converting Tag object to TagDto object
         List<TagDto> tagDtos = tagList.getRecords()
@@ -50,7 +50,7 @@ public class TagServiceImpl implements TagService {
     public TagDto getById(long id) {
         Optional<Tag> tag = tagDao.getById(id);
         if (tag.isEmpty()) {
-            throw new ResourceNotFoundException(id);
+            throw new ResourceNotFoundException("Requested resource not found ( id = " + id + " )");
         }
         return TagConverter.toDto(tag.get());
     }
@@ -59,7 +59,7 @@ public class TagServiceImpl implements TagService {
     public TagDto getByName(String name) {
         Optional<Tag> tag = tagDao.getByName(name);
         if (tag.isEmpty()) {
-            throw new ResourceNotFoundException();
+            throw new ResourceNotFoundException("Requested resource not found ( name = " + name + " )");
         }
         return TagConverter.toDto(tag.get());
     }
@@ -68,7 +68,7 @@ public class TagServiceImpl implements TagService {
     public TagDto getTopUsedOfUser(long userId) {
         Optional<Tag> optionalTag = tagDao.getTopUsedWithHighestCostOfOrder(userId);
         if (optionalTag.isEmpty()) {
-            throw new ResourceNotFoundException(userId);
+            throw new ResourceNotFoundException("Requested resource not found ( id = " + userId + " )");
         }
         return TagConverter.toDto(optionalTag.get());
     }
@@ -79,14 +79,15 @@ public class TagServiceImpl implements TagService {
         if (tag.isPresent()) {
             throw new DuplicateEntityException();
         }
-        return TagConverter.toDto(tagDao.insert(TagConverter.toEntity(tagDto)));
+        Tag savedTag = tagDao.insert(TagConverter.toEntity(tagDto));
+        return TagConverter.toDto(savedTag);
     }
 
     @Override
     public boolean deleteById(long id) {
         Optional<Tag> tag = tagDao.getById(id);
         if (tag.isEmpty()) {
-            throw new ResourceNotFoundException(id);
+            throw new ResourceNotFoundException("Requested resource not found ( id = " + id + " )");
         }
         return tagDao.remove(tag.get());
     }

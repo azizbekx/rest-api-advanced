@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,12 +24,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public PaginationResult<UserDto> getAll(EntityPage entityPage) {
-
         PaginationResult<User> userList = userDao.list(entityPage);
-        if (userList.getRecords().isEmpty()) {
-            throw new ResourceNotFoundException();
+        if (entityPage.getPage() == 1 && userList.getRecords().isEmpty()) {
+            throw new ResourceNotFoundException("Resource not found");
         }
-
         //converting Tag object to TagDto object
         List<UserDto> userDtos = userList.getRecords()
                 .stream()
@@ -48,7 +47,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getById(long id) {
-        return null;
+        Optional<User> optionalUser = userDao.getById(id);
+        if (optionalUser.isEmpty()) {
+            throw new ResourceNotFoundException("Resource not found ( id = " + id + " )");
+        }
+        return UserConvert.toDto(optionalUser.get());
     }
 
     @Override

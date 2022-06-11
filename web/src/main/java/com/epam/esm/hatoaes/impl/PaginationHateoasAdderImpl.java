@@ -16,7 +16,7 @@ public class PaginationHateoasAdderImpl<T> implements HateoasAdder<PaginationRes
 
     @Override
     public void addSelfLinks(PaginationResult<T> paginationResult) {
-        int totalPages = (int) paginationResult.getPage().getTotalRecords();
+        int totalPages = paginationResult.getPage().getLastPageNumber();
         int page = paginationResult.getPage().getCurrentPageNumber();
         int pageSize = paginationResult.getPage().getPageSize();
 
@@ -67,11 +67,11 @@ public class PaginationHateoasAdderImpl<T> implements HateoasAdder<PaginationRes
     }
 
     boolean hasNextPage(final int page, final int totalPages) {
-        return page < totalPages - 1;
+        return page < totalPages;
     }
 
     boolean hasPreviousPage(final int page) {
-        return page > 0;
+        return page > 1;
     }
 
     boolean hasFirstPage(final int page) {

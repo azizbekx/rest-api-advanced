@@ -92,7 +92,7 @@ public class GiftFilterDao {
         if (Objects.nonNull(searchCriteria.getPrice())) {
             predicates.add(
                     builder.like(root.get("price"),
-                            "%" + searchCriteria.getPrice() + "%")
+                            searchCriteria.getPrice())
             );
         }
         if (Objects.nonNull(searchCriteria.getDuration())) {

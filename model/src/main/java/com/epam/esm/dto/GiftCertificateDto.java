@@ -20,6 +20,9 @@ public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> 
     public GiftCertificateDto() {
     }
 
+    public GiftCertificateDto(long id) {
+        this.id = id;
+    }
 
     public GiftCertificateDto(long id, String name, String description, BigDecimal price, int duration, String create_date, String last_update_date) {
         this.id = id;

@@ -38,6 +38,10 @@ public class GiftCertificate {
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags = new HashSet<>();
 
+    @ManyToMany(mappedBy = "giftCertificates",
+            fetch = FetchType.LAZY)
+    private Set<Order> orders = new HashSet<>();
+
     public GiftCertificate(long id, String name, String description, BigDecimal price, int duration, Set<Tag> tags) {
         this.id = id;
         this.name = name;
@@ -80,6 +84,30 @@ public class GiftCertificate {
 
     public GiftCertificate() {
 
+    }
+
+    public GiftCertificate(String name, String description, BigDecimal price, int duration, LocalDateTime createDate, LocalDateTime lastUpdateTime) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.duration = duration;
+        this.createDate = createDate;
+        this.lastUpdateTime = lastUpdateTime;
+    }
+
+    public GiftCertificate(String name, String description, BigDecimal price, int duration, Set<Tag> tags, Set<Order> orders) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.duration = duration;
+        this.tags = tags;
+        this.orders = orders;
+    }
+
+    public GiftCertificate(String description, LocalDateTime createDate, LocalDateTime lastUpdateTime) {
+        this.description = description;
+        this.createDate = createDate;
+        this.lastUpdateTime = lastUpdateTime;
     }
 
     @PrePersist
@@ -160,6 +188,14 @@ public class GiftCertificate {
     public void addTag(Tag tag) {
         this.tags.add(tag);
         tag.getGiftCertificates().add(this);
+    }
+
+    public Set<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(Set<Order> orders) {
+        this.orders = orders;
     }
 
     public void removeTag(long tagId) {

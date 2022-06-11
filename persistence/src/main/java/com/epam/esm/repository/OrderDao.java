@@ -1,9 +1,9 @@
 package com.epam.esm.repository;
 
 import com.epam.esm.entity.Order;
-
-import java.util.List;
+import com.epam.esm.entity.creteria.EntityPage;
+import com.epam.esm.pagination.PaginationResult;
 
 public interface OrderDao extends BasicDao<Order> {
-    List<Order> getOrdersByUser(long userId);
+    PaginationResult<Order> getOrdersByUser(long userId, EntityPage entityPage);
 }

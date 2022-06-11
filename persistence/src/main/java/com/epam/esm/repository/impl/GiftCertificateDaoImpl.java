@@ -2,7 +2,7 @@ package com.epam.esm.repository.impl;
 
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.repository.GiftCertificateDao;
-import com.epam.esm.repository.PaginationDao;
+import com.epam.esm.repository.pagination.PaginationDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,18 +30,14 @@ public class GiftCertificateDaoImpl extends PaginationDao<GiftCertificate> imple
 
     @Override
     public GiftCertificate insert(GiftCertificate gift) {
-        try {
-            entityManager.persist(gift);
-            return gift;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
+        entityManager.persist(gift);
+        return gift;
     }
 
     @Override
     public boolean remove(GiftCertificate giftCertificate) {
-        deleteRemovedGiftCertificate(giftCertificate.getId());
+        deleteFromTag(giftCertificate.getId());
+        deleteFromOrder(giftCertificate.getId());
         entityManager.remove(giftCertificate);
         return entityManager.find(GiftCertificate.class, giftCertificate.getId()) == null;
     }
@@ -52,8 +48,15 @@ public class GiftCertificateDaoImpl extends PaginationDao<GiftCertificate> imple
     }
 
     @Override
-    public boolean deleteRemovedGiftCertificate(long id) {
+    public boolean deleteFromTag(long id) {
         return entityManager.createNativeQuery("DELETE FROM giftsystem.gift_certificates_tags WHERE gift_certificate_id=:gift_certificate_id")
+                .setParameter("gift_certificate_id", id)
+                .executeUpdate() > 0;
+    }
+
+    @Override
+    public boolean deleteFromOrder(long id) {
+        return entityManager.createNativeQuery("DELETE FROM giftsystem.orders_gift_certificates WHERE gift_certificate_id=:gift_certificate_id")
                 .setParameter("gift_certificate_id", id)
                 .executeUpdate() > 0;
     }

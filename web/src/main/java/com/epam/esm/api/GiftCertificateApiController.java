@@ -77,7 +77,9 @@ public class GiftCertificateApiController {
     @ResponseStatus(HttpStatus.CREATED)
     public GiftCertificateDto insert(@RequestBody GiftCertificateDto giftCertificateDto) {
         //validate incorrect illegal argument exception
-        return giftService.insert(giftCertificateDto);
+        GiftCertificateDto giftDto = giftService.insert(giftCertificateDto);
+        hateoasAdder.addFullLinks(giftDto);
+        return giftDto;
     }
 
     /**
@@ -88,7 +90,9 @@ public class GiftCertificateApiController {
      */
     @PatchMapping("/update/{id}")
     public GiftCertificateDto update(@PathVariable long id, @RequestBody GiftCertificateDto giftCertificateDto) {
-        return giftService.update(id, giftCertificateDto);
+        GiftCertificateDto giftDto = giftService.update(id, giftCertificateDto);
+        hateoasAdder.addFullLinks(giftDto);
+        return giftDto;
     }
 
     /**
@@ -100,17 +104,10 @@ public class GiftCertificateApiController {
     @DeleteMapping("/delete/{id}")
     public @ResponseBody SuccessResponse deleteById(@PathVariable long id) {
         boolean success = giftService.deleteById(id);
-        String message = success ? "Object was successfully updated" : "Object cannot be updated";
+        String message = success ? "Object was successfully deleted" : "Object cannot be deleted";
         return new SuccessResponse(success, message + " (id = " + id + " )");
     }
 
-    //request param
-    //check in service parse and print error
-
-    //sort=desc(name),asc(date)
-    //sortby = name,date&sortDir = desc,asc
-    //filter?created_date:2022... like
-    //filter?create_date:let:2022:gte2023
     @GetMapping("/filter")
     public ResponseEntity<PaginationResult<GiftCertificateDto>> findWithParams(
             GiftSearchCriteria searchCriteria,

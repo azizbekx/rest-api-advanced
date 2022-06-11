@@ -70,14 +70,13 @@ public class Tag {
         if (this == o) return true;
         if (!(o instanceof Tag)) return false;
         Tag tag = (Tag) o;
-        return id == tag.id && Objects.equals(name, tag.name);
+        return id == tag.id && Objects.equals(name, tag.name) && Objects.equals(giftCertificates, tag.giftCertificates);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name);
+        return Objects.hash(id, name, giftCertificates);
     }
-
 
     @Override
     public String toString() {

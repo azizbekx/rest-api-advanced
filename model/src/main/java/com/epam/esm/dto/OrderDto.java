@@ -3,28 +3,28 @@ package com.epam.esm.dto;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class OrderDto extends RepresentationModel<OrderDto> {
     private long id;
     private BigDecimal price;
     private String create_date;
     private long user_id;
-    private long gift_certificate_id;
-
+    private List<GiftCertificateDto> gift_certificates;
     public OrderDto() {
     }
 
-    public OrderDto(long user_id, long gift_certificate_id) {
+    public OrderDto(long user_id, List<GiftCertificateDto> gift_certificates) {
         this.user_id = user_id;
-        this.gift_certificate_id = gift_certificate_id;
+        this.gift_certificates = gift_certificates;
     }
 
-    public OrderDto(long id, BigDecimal price, String create_date, long user_id, long gift_certificate_id) {
+    public OrderDto(long id, BigDecimal price, String create_date, long user_id, List<GiftCertificateDto> gift_certificates) {
         this.id = id;
         this.price = price;
         this.create_date = create_date;
         this.user_id = user_id;
-        this.gift_certificate_id = gift_certificate_id;
+        this.gift_certificates = gift_certificates;
     }
 
     public long getId() {
@@ -59,11 +59,11 @@ public class OrderDto extends RepresentationModel<OrderDto> {
         this.user_id = user_id;
     }
 
-    public long getGift_certificate_id() {
-        return gift_certificate_id;
+    public List<GiftCertificateDto> getGift_certificates() {
+        return gift_certificates;
     }
 
-    public void setGift_certificate_id(long gift_certificate_id) {
-        this.gift_certificate_id = gift_certificate_id;
+    public void setGift_certificates(List<GiftCertificateDto> gift_certificates) {
+        this.gift_certificates = gift_certificates;
     }
 }

@@ -1,13 +1,15 @@
 package com.epam.esm.service;
 
+import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.UserDto;
+import com.epam.esm.entity.creteria.EntityPage;
+import com.epam.esm.pagination.PaginationResult;
 
 import java.util.List;
-import java.util.Set;
 
 public interface OrderService extends BasicService<OrderDto> {
-    UserDto saveByUser(long id, Set<Long> giftIds);
+    UserDto saveByUser(long id, List<GiftCertificateDto> giftDtos);
 
-    List<OrderDto> getOrderByUser(long userId);
+    PaginationResult<OrderDto> getOrderByUser(long userId, EntityPage entityPage);
 }

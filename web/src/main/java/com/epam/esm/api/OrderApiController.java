@@ -56,7 +56,9 @@ public class OrderApiController {
 
     @PostMapping
     public OrderDto insert(@RequestBody OrderDto orderDto) {
-        return orderService.insert(orderDto);
+        OrderDto savedOrder = orderService.insert(orderDto);
+        hateoasAdder.addFullLinks(savedOrder);
+        return savedOrder;
     }
 
 

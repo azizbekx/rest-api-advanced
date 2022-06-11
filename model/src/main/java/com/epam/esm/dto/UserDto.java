@@ -14,11 +14,6 @@ public class UserDto extends RepresentationModel<UserDto> {
     public UserDto() {
     }
 
-    public UserDto(long id, String name, List<OrderDto> orders) {
-        this.id = id;
-        this.name = name;
-        this.orders = orders;
-    }
 
     public long getId() {
         return id;

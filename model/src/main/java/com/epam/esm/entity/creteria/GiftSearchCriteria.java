@@ -24,6 +24,7 @@ public class GiftSearchCriteria {
         this.last_update_date = last_update_date;
     }
 
+
     public String getTag_name() {
         return tag_name;
     }

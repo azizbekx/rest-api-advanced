@@ -2,8 +2,8 @@ package com.epam.esm.repository.impl;
 
 import com.epam.esm.entity.Tag;
 import com.epam.esm.repository.GiftCertificateDao;
-import com.epam.esm.repository.PaginationDao;
 import com.epam.esm.repository.TagDao;
+import com.epam.esm.repository.pagination.PaginationDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,10 +14,6 @@ import java.util.Optional;
 
 @Repository
 public class TagDaoImpl extends PaginationDao<Tag> implements TagDao {
-    private static final String SELECT_MOST_USED_TAG_WITH_HIGHEST_COST_OF_ORDER =
-            "SELECT t FROM GiftCertificate g INNER JOIN g.tags t "
-                    + "WHERE g.id IN (SELECT o.giftCertificate.id FROM Order o "
-                    + "WHERE o.user.id = :userId) GROUP BY t.id ORDER BY COUNT(t.id) DESC";
     @PersistenceContext
     EntityManager entityManager;
     @Autowired
@@ -27,6 +23,12 @@ public class TagDaoImpl extends PaginationDao<Tag> implements TagDao {
     public TagDaoImpl() {
         super(Tag.class);
     }
+
+    private static final String SELECT_TOP_USED_TAG_WITH_HIGHEST_COST_OF_ORDERS =
+            "select t from GiftCertificate g " +
+                    "join g.tags t " +
+                    "where g.id in (select g2.id from Order o join o.giftCertificates g2 " +
+                    "where o.user.id = :userId) group by t.id order by count(t.id) desc";
 
     @Override
     public Optional<Tag> getById(long id) {
@@ -41,7 +43,6 @@ public class TagDaoImpl extends PaginationDao<Tag> implements TagDao {
                 .getResultList()
                 .stream().findFirst();
     }
-
     @Override
     @Transactional
     public Tag insert(Tag tag) {
@@ -56,8 +57,6 @@ public class TagDaoImpl extends PaginationDao<Tag> implements TagDao {
         entityManager.remove(tag);
         return entityManager.find(Tag.class, tag.getId()) == null;
     }
-
-
     @Override
     public boolean deleteRemovedTag(long id) {
         return entityManager
@@ -65,10 +64,9 @@ public class TagDaoImpl extends PaginationDao<Tag> implements TagDao {
                 .setParameter("tag_id", id)
                 .executeUpdate() > 0;
     }
-
     @Override
     public Optional<Tag> getTopUsedWithHighestCostOfOrder(long userId) {
-        return entityManager.createQuery(SELECT_MOST_USED_TAG_WITH_HIGHEST_COST_OF_ORDER, Tag.class)
+        return entityManager.createQuery(SELECT_TOP_USED_TAG_WITH_HIGHEST_COST_OF_ORDERS, Tag.class)
                 .setParameter("userId", userId)
                 .getResultList()
                 .stream()

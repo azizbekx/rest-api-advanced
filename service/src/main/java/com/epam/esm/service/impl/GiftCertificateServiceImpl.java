@@ -28,24 +28,20 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private TagDao tagDao;
     @Autowired
     private GiftFilterDao giftFilterDao;
-
-
     @Override
     public PaginationResult<GiftCertificateDto> getAll(EntityPage entityPage) {
         PaginationResult<GiftCertificate> giftList = giftDoa.list(entityPage);
         //add entityname and some constructor for error message
         return getGiftCertificateDtoPaginationResult(entityPage, giftList);
     }
-
     @Override
     public GiftCertificateDto getById(long id) {
         Optional<GiftCertificate> g = giftDoa.getById(id);
         if (g.isEmpty()) {
-            throw new ResourceNotFoundException(id);
+            throw new ResourceNotFoundException("Requested resource not found ( id = " + id + " )");
         }
         return GiftConverter.toDto(g.get());
     }
-
     @Override
     public GiftCertificateDto insert(GiftCertificateDto giftCertificateDto) {
         GiftCertificate giftCertificate;
@@ -54,16 +50,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         Set<Tag> requestTags = giftCertificate.getTags();
         Set<Tag> reqTagsWithIds = checkTags(requestTags);
         giftCertificate.setTags(reqTagsWithIds);
-
         return GiftConverter.toDto(giftDoa.insert(giftCertificate));
     }
-
     @Override
     public GiftCertificateDto update(long id, GiftCertificateDto newGiftDto) {
 
         Optional<GiftCertificate> oldGift = giftDoa.getById(id);
         if (oldGift.isEmpty() || Objects.isNull(newGiftDto)) {
-            throw new ResourceNotFoundException(id);
+            throw new ResourceNotFoundException("Requested resource not found ( id = " + id + " )");
         }
         Optional<GiftCertificate> savedGift = giftDoa.getByName(newGiftDto.getName());
         if (savedGift.isPresent()) {
@@ -78,25 +72,22 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         GiftCertificate newGift = checkGiftCertificate(reqGift, oldGift.get());
         return GiftConverter.toDto(giftDoa.update(newGift));
     }
-
     @Override
     public boolean deleteById(long id) {
         Optional<GiftCertificate> g = giftDoa.getById(id);
         if (g.isEmpty()) {
-            throw new ResourceNotFoundException(id);
+            throw new ResourceNotFoundException("Requested resource not found ( id = " + id + " )");
         }
         return giftDoa.remove(g.get());
     }
-
     @Override
     public PaginationResult<GiftCertificateDto> getWithFilter(GiftSearchCriteria searchCriteria, EntityPage entityPage) {
         PaginationResult<GiftCertificate> giftList = giftFilterDao.findAllWithFilters(searchCriteria, entityPage);
         return getGiftCertificateDtoPaginationResult(entityPage, giftList);
     }
-
     private PaginationResult<GiftCertificateDto> getGiftCertificateDtoPaginationResult(EntityPage entityPage, PaginationResult<GiftCertificate> giftList) {
         if (entityPage.getPage() == 1 && giftList.getRecords().isEmpty()) {
-            throw new ResourceNotFoundException("Requested resource not found");
+            throw new ResourceNotFoundException("Resource not found");
         }
         List<GiftCertificateDto> giftDtos = giftList.getRecords()
                 .stream()
@@ -111,7 +102,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                 giftDtos
         );
     }
-
     private Set<Tag> checkTags(Set<Tag> requestTags) {
         Set<Tag> reqTagWithIds = new HashSet<>();
         if (requestTags == null) {
@@ -125,7 +115,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         }
         return reqTagWithIds;
     }
-
     private GiftCertificate checkGiftCertificate(GiftCertificate newGift, GiftCertificate oldGift) {
         if (newGift.getName() != null) {
             oldGift.setName(newGift.getName());

@@ -1,4 +1,4 @@
-package com.epam.esm.repository;
+package com.epam.esm.repository.pagination;
 
 import com.epam.esm.entity.creteria.EntityPage;
 import com.epam.esm.pagination.Page;

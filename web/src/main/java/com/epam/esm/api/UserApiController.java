@@ -11,10 +11,7 @@ import com.epam.esm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -33,7 +30,15 @@ public class UserApiController {
 
     @Autowired
     private PaginationHateoasAdderImpl<UserDto> hateoasAdderForPagination;
+    @Autowired
+    private PaginationHateoasAdderImpl<OrderDto> hateoasAdderForPaginationForOrder;
 
+    /**
+     * Method for getting all object from db
+     *
+     * @param entityPage - EntityPage is collection of page parameters in object
+     * @return PaginationResult<UserDTo> entity is found entities in db
+     */
     @GetMapping
     public ResponseEntity<PaginationResult<UserDto>> getAll(EntityPage entityPage) {
         PaginationResult<UserDto> paginationResult = userService.getAll(entityPage);
@@ -54,6 +59,12 @@ public class UserApiController {
         }
     }
 
+    /**
+     * Method for getting object with id from db
+     *
+     * @param id it is id of object which is getting
+     * @return UserDto entity is found
+     */
     @GetMapping("/{id}")
     public ResponseEntity<UserDto> getById(@PathVariable long id) {
         UserDto userDto = userService.getById(id);
@@ -61,12 +72,32 @@ public class UserApiController {
         return new ResponseEntity<>(userDto, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}/order")
-    public ResponseEntity<List<OrderDto>> getOrders(@PathVariable long id) {
-        List<OrderDto> orderDtos = orderService.getOrderByUser(id)
-                .stream().peek(hateoasAdderForOrder::addSelfLinks)
+    @GetMapping("/{id}/orders")
+    public ResponseEntity<PaginationResult<OrderDto>> getOrders(@PathVariable long id, EntityPage entityPage) {
+        PaginationResult<OrderDto> paginationResult = orderService.getOrderByUser(id, entityPage);
+        //adding pagination hal links
+        hateoasAdderForPagination.setResourceName("users/" + id + "/order");
+        hateoasAdderForPaginationForOrder.addSelfLinks(paginationResult);
+        //adding hateoas for each object
+        List<OrderDto> orderList = paginationResult.getRecords()
+                .stream()
+                .peek(hateoasAdderForOrder::addSelfLinks)
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(orderDtos, HttpStatus.OK);
+        paginationResult.setRecords(orderList);
+
+        if (entityPage.getSize() == paginationResult.getPage().getTotalRecords()) {
+            return new ResponseEntity<>(paginationResult, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(paginationResult, HttpStatus.PARTIAL_CONTENT);
+        }
+    }
+
+    @PostMapping("/{id}/order")
+    public ResponseEntity<UserDto> saveOrder(@PathVariable long id,
+                                             @RequestBody OrderDto orderDto) {
+        UserDto userDto = orderService.saveByUser(id, orderDto.getGift_certificates());
+        hateoasAdder.addFullLinks(userDto);
+        return new ResponseEntity<>(userDto, HttpStatus.OK);
     }
 
 }
