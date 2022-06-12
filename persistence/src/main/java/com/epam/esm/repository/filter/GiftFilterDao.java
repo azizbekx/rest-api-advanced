@@ -65,10 +65,27 @@ public class GiftFilterDao {
     private void orderBy(CriteriaQuery<GiftCertificate> query,
                          CriteriaBuilder builder,
                          Root<GiftCertificate> giftRoot, EntityPage entityPage) {
-        if (entityPage.getSortDir().equalsIgnoreCase("asc")) {
-            query.orderBy(builder.asc(giftRoot.get(entityPage.getSortBy())));
+
+        String sortBy = entityPage.getSortBy();
+        String sortDir = entityPage.getSortDir();
+        if (sortBy.contains(",")) {
+            String[] sortByArr = sortBy.split(",");
+            if (sortDir.contains(",")) {
+                String[] sortDirArr = sortDir.split(",");
+                for (int i = 0; i < sortByArr.length; i++) {
+                    if (sortDirArr[i].equals("desc")) {
+                        query.orderBy(builder.desc(giftRoot.get(sortByArr[i])));
+                    } else {
+                        query.orderBy(builder.asc(giftRoot.get(sortByArr[i])));
+                    }
+                }
+            }
         } else {
-            query.orderBy(builder.desc(giftRoot.get(entityPage.getSortBy())));
+            if (entityPage.getSortDir().equalsIgnoreCase("desc")) {
+                query.orderBy(builder.desc(giftRoot.get(entityPage.getSortBy())));
+            } else {
+                query.orderBy(builder.asc(giftRoot.get(entityPage.getSortBy())));
+            }
         }
     }
 

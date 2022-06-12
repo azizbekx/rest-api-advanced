@@ -12,11 +12,12 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.sql.SQLException;
 
 @RestControllerAdvice
-public class ExceptionsHandler {
+public class ExceptionsHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleNotFoundException(ResourceNotFoundException e) {
@@ -36,7 +37,7 @@ public class ExceptionsHandler {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<ErrorResponse> handleMethodNotAllowed() {
         return new ResponseEntity<>(
-                new ErrorResponse(405, "Method not found"),
+                new ErrorResponse(405, "Method not supported"),
                 HttpStatus.METHOD_NOT_ALLOWED);
     }
 
@@ -61,11 +62,11 @@ public class ExceptionsHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
+    @ExceptionHandler({IllegalArgumentException.class, IllegalStateException.class})
     public ResponseEntity<ErrorResponse> handleIllegalArgumentException(IllegalArgumentException e) {
         ErrorResponse errorResponse =
                 new ErrorResponse(40003, e.getMessage());
-        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler({SQLException.class, DataAccessException.class})
