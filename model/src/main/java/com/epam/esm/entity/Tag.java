@@ -18,9 +18,8 @@ public class Tag {
     @Nationalized
     private String name;
 
-    @ManyToMany(
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.PERSIST)
+    @ManyToMany(mappedBy = "tags",
+            fetch = FetchType.LAZY)
     private Set<GiftCertificate> giftCertificates = new HashSet<>();
 
     public Tag() {

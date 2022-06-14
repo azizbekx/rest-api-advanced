@@ -76,7 +76,6 @@ public class GiftCertificateApiController {
     @PostMapping("/insert")
     @ResponseStatus(HttpStatus.CREATED)
     public GiftCertificateDto insert(@RequestBody GiftCertificateDto giftCertificateDto) {
-        //validate incorrect illegal argument exception
         GiftCertificateDto giftDto = giftService.insert(giftCertificateDto);
         hateoasAdder.addFullLinks(giftDto);
         return giftDto;
@@ -108,6 +107,13 @@ public class GiftCertificateApiController {
         return new SuccessResponse(success, message + " (id = " + id + " )");
     }
 
+    /**
+     * Method for getting objects with based on some order
+     *
+     * @param searchCriteria SearchCriteria is collection of parameters
+     * @param entityPage     EntityPage is object for inserting sort or page data
+     * @return GiftCertificateDTO
+     */
     @GetMapping("/filter")
     public ResponseEntity<PaginationResult<GiftCertificateDto>> findWithParams(
             GiftSearchCriteria searchCriteria,

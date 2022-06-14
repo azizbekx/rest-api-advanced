@@ -24,6 +24,18 @@ public class TagDaoImpl extends PaginationDao<Tag> implements TagDao {
         super(Tag.class);
     }
 
+    /*
+    Native SQL version
+    select t from tags t
+    join gift_certificates_tags gct on t.id = gct.tag_id
+    join gift_certificates gc on gc.id = gct.gift_certificate_id
+    where gc.id in
+          (select gc2.id from gift_certificates gc2
+                         join orders_gift_certificates ogc on gc2.id = ogc.gift_certificate_id
+                         join orders o on o.id = ogc.order_id
+                         where o.user_id = :userId)
+    group by t.id order by count(t.id) desc;
+     */
     private static final String SELECT_TOP_USED_TAG_WITH_HIGHEST_COST_OF_ORDERS =
             "select t from GiftCertificate g " +
                     "join g.tags t " +
@@ -60,7 +72,7 @@ public class TagDaoImpl extends PaginationDao<Tag> implements TagDao {
     @Override
     public boolean deleteRemovedTag(long id) {
         return entityManager
-                .createNativeQuery("DELETE FROM giftsystem.gift_certificates_tags WHERE tag_id=:tag_id")
+                .createNativeQuery("DELETE FROM gift_certificates_tags WHERE tag_id=:tag_id")
                 .setParameter("tag_id", id)
                 .executeUpdate() > 0;
     }

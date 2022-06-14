@@ -16,6 +16,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Class {@code UserApiController} controller api which operation of all user system.
+ */
+
 @RestController
 @RequestMapping("/users")
 public class UserApiController {
@@ -72,6 +76,13 @@ public class UserApiController {
         return new ResponseEntity<>(userDto, HttpStatus.OK);
     }
 
+    /**
+     * Method for getting orders with id of users
+     *
+     * @param id         ID is user's id
+     * @param entityPage page and sorting parameters
+     * @return PaginationResult<OrderDto>
+     */
     @GetMapping("/{id}/orders")
     public ResponseEntity<PaginationResult<OrderDto>> getOrders(@PathVariable long id, EntityPage entityPage) {
         PaginationResult<OrderDto> paginationResult = orderService.getOrderByUser(id, entityPage);
@@ -92,6 +103,13 @@ public class UserApiController {
         }
     }
 
+    /**
+     * Method for inserting order for user
+     *
+     * @param id       ID is user's id
+     * @param orderDto OrderDto is needed to inserted
+     * @return UserDto which is updated
+     */
     @PostMapping("/{id}/order")
     public ResponseEntity<UserDto> saveOrder(@PathVariable long id,
                                              @RequestBody OrderDto orderDto) {

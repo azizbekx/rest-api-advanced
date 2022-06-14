@@ -5,6 +5,7 @@ import com.epam.esm.entity.creteria.EntityPage;
 import com.epam.esm.hatoaes.HateoasAdder;
 import com.epam.esm.hatoaes.impl.PaginationHateoasAdderImpl;
 import com.epam.esm.pagination.PaginationResult;
+import com.epam.esm.response.SuccessResponse;
 import com.epam.esm.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+/**
+ * Class {@code OrderApiController} controller api which operation of all order system.
+ */
 
 @RestController
 @RequestMapping("/orders")
@@ -26,7 +31,11 @@ public class OrderApiController {
     @Autowired
     private PaginationHateoasAdderImpl<OrderDto> hateoasAdderForPagination;
 
-
+    /**
+     * Method for getting all object from db
+     *
+     * @return List of OrderDto entity is found entities in db
+     */
     @GetMapping
     public ResponseEntity<PaginationResult<OrderDto>> getAll(EntityPage entityPage) {
         PaginationResult<OrderDto> paginationResult = orderService.getAll(entityPage);
@@ -47,6 +56,12 @@ public class OrderApiController {
         }
     }
 
+    /**
+     * Method for getting object with id from db
+     *
+     * @param id it is id of object which is getting
+     * @return OrderDto entity is found
+     */
     @GetMapping("/{id}")
     public OrderDto getById(@PathVariable long id) {
         OrderDto orderDto = orderService.getById(id);
@@ -54,6 +69,12 @@ public class OrderApiController {
         return orderDto;
     }
 
+    /**
+     * Method for inserting object to db
+     *
+     * @param orderDto is id of object which is getting
+     * @return OrderDto entity is inserted
+     */
     @PostMapping
     public OrderDto insert(@RequestBody OrderDto orderDto) {
         OrderDto savedOrder = orderService.insert(orderDto);
@@ -61,5 +82,19 @@ public class OrderApiController {
         return savedOrder;
     }
 
+    /**
+     * Method for inserting object to db
+     *
+     * @param orderDtos List of Order Objects is inserting
+     * @return OrderDto entity is inserted
+     */
+    @PostMapping("/list")
+    public SuccessResponse insertList(@RequestBody List<OrderDto> orderDtos) {
+        for (OrderDto orderDto : orderDtos) {
+            orderService.insert(orderDto);
+
+        }
+        return new SuccessResponse(true, "Objects was successfully created");
+    }
 
 }

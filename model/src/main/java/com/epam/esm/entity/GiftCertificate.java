@@ -7,7 +7,6 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -17,16 +16,16 @@ public class GiftCertificate {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @Column(name = "name", nullable = false)
+    @Column(nullable = false)
     @Nationalized
     private String name;
-    @Column(name = "description")
+    @Column
     private String description;
-    @Column(name = "price", nullable = false)
+    @Column(nullable = false)
     private BigDecimal price;
-    @Column(name = "duration", nullable = false)
+    @Column(nullable = false)
     private int duration;
-    @Column(name = "create_date", nullable = false, unique = true)
+    @Column(name = "create_date", nullable = false)
     private LocalDateTime createDate;
     @Column(name = "last_update_date")
     private LocalDateTime lastUpdateTime;
@@ -204,19 +203,6 @@ public class GiftCertificate {
             this.tags.remove(tag);
             tag.getGiftCertificates().remove(this);
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof GiftCertificate)) return false;
-        GiftCertificate that = (GiftCertificate) o;
-        return id == that.id && duration == that.duration && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(price, that.price) && Objects.equals(createDate, that.createDate) && Objects.equals(lastUpdateTime, that.lastUpdateTime) && Objects.equals(tags, that.tags);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, description, price, duration, createDate, lastUpdateTime, tags);
     }
 
     @Override

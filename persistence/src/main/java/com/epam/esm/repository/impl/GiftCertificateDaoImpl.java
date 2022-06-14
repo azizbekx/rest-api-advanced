@@ -49,14 +49,14 @@ public class GiftCertificateDaoImpl extends PaginationDao<GiftCertificate> imple
 
     @Override
     public boolean deleteFromTag(long id) {
-        return entityManager.createNativeQuery("DELETE FROM giftsystem.gift_certificates_tags WHERE gift_certificate_id=:gift_certificate_id")
+        return entityManager.createNativeQuery("DELETE FROM gift_certificates_tags WHERE gift_certificate_id=:gift_certificate_id")
                 .setParameter("gift_certificate_id", id)
                 .executeUpdate() > 0;
     }
 
     @Override
     public boolean deleteFromOrder(long id) {
-        return entityManager.createNativeQuery("DELETE FROM giftsystem.orders_gift_certificates WHERE gift_certificate_id=:gift_certificate_id")
+        return entityManager.createNativeQuery("DELETE FROM orders_gift_certificates WHERE gift_certificate_id=:gift_certificate_id")
                 .setParameter("gift_certificate_id", id)
                 .executeUpdate() > 0;
     }
