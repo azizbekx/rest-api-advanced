@@ -34,6 +34,10 @@ public class GiftCertificateDaoImpl extends PaginationDao<GiftCertificate> imple
         return gift;
     }
 
+    // Gift _ 1 [ tag_1, tag_2 ]
+    // Gift _ 2 [tag_1, tag_3]
+    // removed Gift _ 1 [
+    // have tag _ 1 , tag _ 2
     @Override
     public boolean remove(GiftCertificate giftCertificate) {
         deleteFromTag(giftCertificate.getId());

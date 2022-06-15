@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -203,6 +204,19 @@ public class GiftCertificate {
             this.tags.remove(tag);
             tag.getGiftCertificates().remove(this);
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof GiftCertificate)) return false;
+        GiftCertificate that = (GiftCertificate) o;
+        return id == that.id && duration == that.duration && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(price, that.price) && Objects.equals(createDate, that.createDate) && Objects.equals(lastUpdateTime, that.lastUpdateTime) && Objects.equals(tags, that.tags) && Objects.equals(orders, that.orders);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description, price, duration, createDate, lastUpdateTime, tags, orders);
     }
 
     @Override

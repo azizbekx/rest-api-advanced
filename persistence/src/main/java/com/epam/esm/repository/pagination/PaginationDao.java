@@ -24,7 +24,6 @@ public abstract class PaginationDao<T> {
         this.entity = entity;
     }
 
-
     public PaginationResult<T> list(EntityPage page) {
         int lastPageNumber;
         Long totalRecords;
@@ -40,6 +39,7 @@ public abstract class PaginationDao<T> {
         } else {
             lastPageNumber = (int) (totalRecords / page.getSize() + 1);
         }
+
         TypedQuery<T> query =
                 entityManager.createQuery("SELECT e FROM " + entity.getSimpleName() + " e " +
                         " ORDER BY e.id ", entity);

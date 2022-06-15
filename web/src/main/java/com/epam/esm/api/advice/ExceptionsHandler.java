@@ -69,6 +69,7 @@ public class ExceptionsHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
+    // tag = 2222222222222222222222
     @ExceptionHandler({SQLException.class, DataAccessException.class})
     public ResponseEntity<ErrorResponse> handleSQLAndDataAccessException(SQLException e) {
         ErrorResponse errorResponse =

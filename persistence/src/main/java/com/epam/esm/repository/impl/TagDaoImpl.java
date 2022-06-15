@@ -69,6 +69,11 @@ public class TagDaoImpl extends PaginationDao<Tag> implements TagDao {
         entityManager.remove(tag);
         return entityManager.find(Tag.class, tag.getId()) == null;
     }
+
+    // Gift _ 1 [ tag_1, tag_2 ]
+    // Gift _ 2 [tag_1, tag_3]
+    // removed Gift _ 1 [
+    // have tag _ 1 , tag _ 2
     @Override
     public boolean deleteRemovedTag(long id) {
         return entityManager
@@ -76,6 +81,7 @@ public class TagDaoImpl extends PaginationDao<Tag> implements TagDao {
                 .setParameter("tag_id", id)
                 .executeUpdate() > 0;
     }
+
     @Override
     public Optional<Tag> getTopUsedWithHighestCostOfOrder(long userId) {
         return entityManager.createQuery(SELECT_TOP_USED_TAG_WITH_HIGHEST_COST_OF_ORDERS, Tag.class)

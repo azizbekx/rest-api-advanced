@@ -85,6 +85,8 @@ public class OrderServiceImpl implements OrderService {
         throw new NotYetImplementedException();
     }
 
+    // users/1/orders
+    // list of gift
     @Override
     public UserDto saveByUser(long userId, List<GiftCertificateDto> giftDtos) {
         insert(new OrderDto(

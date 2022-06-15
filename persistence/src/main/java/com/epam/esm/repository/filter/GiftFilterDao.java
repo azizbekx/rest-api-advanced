@@ -66,6 +66,8 @@ public class GiftFilterDao {
                          CriteriaBuilder builder,
                          Root<GiftCertificate> giftRoot, EntityPage entityPage) {
 
+        // sortBy = name
+        // sortBy = name,description & sortDir=asc,desc
         String sortBy = entityPage.getSortBy();
         String sortDir = entityPage.getSortDir();
         if (sortBy.contains(",")) {
@@ -106,6 +108,7 @@ public class GiftFilterDao {
                             "%" + searchCriteria.getDescription() + "%")
             );
         }
+        // 13.32 -> 13 ; [10999 - 11000]
         if (Objects.nonNull(searchCriteria.getPrice())) {
             predicates.add(
                     builder.like(root.get("price"),
@@ -118,6 +121,7 @@ public class GiftFilterDao {
                             searchCriteria.getDuration())
             );
         }
+        // 2022 ->
         if (Objects.nonNull(searchCriteria.getCreate_date())) {
             String create_date = searchCriteria.getCreate_date();
             Expression<String> dateStringExpr =
@@ -140,6 +144,9 @@ public class GiftFilterDao {
                     builder.like(
                             builder.lower(dateStringExpr), "%" + create_date.toLowerCase() + "%"));
         }
+        // tag_name = tag_1
+        // tag_name = tag_1,tag_2
+        //
         if (Objects.nonNull(searchCriteria.getTag_name())) {
             String tag_name = searchCriteria.getTag_name();
             if (tag_name.contains(",")) {

@@ -5,6 +5,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -99,6 +100,19 @@ public class Order {
 
     public void setGiftCertificates(Set<GiftCertificate> giftCertificates) {
         this.giftCertificates = giftCertificates;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Order)) return false;
+        Order order = (Order) o;
+        return id == order.id && Objects.equals(price, order.price) && Objects.equals(createDate, order.createDate) && Objects.equals(user, order.user) && Objects.equals(giftCertificates, order.giftCertificates);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, price, createDate, user, giftCertificates);
     }
 
     @Override
